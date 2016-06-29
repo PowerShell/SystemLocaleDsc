@@ -1,5 +1,5 @@
 $TestSystemLocale = [PSObject]@{
-    SystemLocale     = 'en-US'
+    SystemLocale     = 'fr-FR'
     IsSingleInstance = 'Yes'
 }
 

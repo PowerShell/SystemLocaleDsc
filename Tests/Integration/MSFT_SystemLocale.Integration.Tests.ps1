@@ -20,7 +20,7 @@ $TestEnvironment = Initialize-TestEnvironment `
 # Store the test machine system locale
 $CurrentSystemLocale = (Get-WinSystemLocale).Name
 # Change the current system locale so that a complete test occurs.
-Set-WinSystemLocale -SystemLocale 'en-UK'
+Set-WinSystemLocale -SystemLocale 'kl-GL'
 
 # Using try/finally to always cleanup even if something awful happens.
 try
@@ -50,7 +50,6 @@ try
             # A reboot would need to occur before this node can be bought into alignment
             # $current.SystemLocale     | Should Be $TestSystemLocale.SystemLocale
             $current.IsSingleInstance | Should Be $TestSystemLocale.IsSingleInstance
-            $global:DSCMachineStatus | Should Be 1
         }
     }
     #endregion

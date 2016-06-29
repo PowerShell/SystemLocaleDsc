@@ -21,5 +21,5 @@ Configuration SetSystemLocale
    }
 }
 
-SystemLocale -NodeName 'localhost' -SystemLocale 'ja-JP'
-Start-DscConfiguration -Path .\SystemLocale -Wait -Verbose -Force
+SetSystemLocale -NodeName 'localhost' -SystemLocale 'ja-JP'
+Start-DscConfiguration -Path .\SetSystemLocale -Wait -Verbose -Force

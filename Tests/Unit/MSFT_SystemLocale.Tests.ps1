@@ -29,7 +29,7 @@ try
             Name        = $TestSystemLocale
             DisplayName = 'English (United States)'
         }
-        $TestAltSystemLocale = 'en-UK'
+        $TestAltSystemLocale = 'en-AU'
 
         Describe 'Schema' {
             it 'IsSingleInstance should be mandatory with one value.' {
