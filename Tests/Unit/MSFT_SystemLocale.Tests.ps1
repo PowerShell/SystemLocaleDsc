@@ -16,11 +16,6 @@ $TestEnvironment = Initialize-TestEnvironment `
     -DSCResourceName $Global:DSCResourceName `
     -TestType Unit
 #endregion HEADER
-$Cultures = [System.Globalization.CultureInfo]::GetCultures([System.Globalization.CultureTypes]::AllCultures).name
-foreach ($Culture in $Cultures)
-{
-    Write-Verbose -Message $Culture -Verbose
-}
 
 # Begin Testing
 try
@@ -34,7 +29,7 @@ try
             Name        = $TestSystemLocale
             DisplayName = 'English (United States)'
         }
-        $TestAltSystemLocale = 'en-UK'
+        $TestAltSystemLocale = 'en-AU'
 
         Describe 'Schema' {
             it 'IsSingleInstance should be mandatory with one value.' {

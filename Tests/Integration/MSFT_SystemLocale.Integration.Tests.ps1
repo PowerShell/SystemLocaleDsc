@@ -20,7 +20,7 @@ $TestEnvironment = Initialize-TestEnvironment `
 # Store the test machine system locale
 $CurrentSystemLocale = (Get-WinSystemLocale).Name
 # Change the current system locale so that a complete test occurs.
-Set-WinSystemLocale -SystemLocale 'en-UK'
+Set-WinSystemLocale -SystemLocale 'en-AU'
 
 # Using try/finally to always cleanup even if something awful happens.
 try
