@@ -16,6 +16,11 @@ $TestEnvironment = Initialize-TestEnvironment `
     -DSCResourceName $Global:DSCResourceName `
     -TestType Unit
 #endregion HEADER
+$Cultures = [System.Globalization.CultureInfo]::GetCultures([System.Globalization.CultureTypes]::AllCultures).name
+foreach ($Culture in $Cultures)
+{
+    Write-Verbose -Message $Culture -Verbose
+}
 
 # Begin Testing
 try
