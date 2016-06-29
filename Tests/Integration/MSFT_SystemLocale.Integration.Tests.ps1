@@ -47,8 +47,10 @@ try
             $current = Get-DscConfiguration | Where-Object {
                 $_.ConfigurationName -eq "$($Global:DSCResourceName)_Config"
             }
-            $current.SystemLocale     | Should Be $TestTimeZone.SystemLocale
-            $current.IsSingleInstance | Should Be $TestTimeZone.IsSingleInstance
+            # A reboot would need to occur before this node can be bought into alignment
+            # $current.SystemLocale     | Should Be $TestSystemLocale.SystemLocale
+            $current.IsSingleInstance | Should Be $TestSystemLocale.IsSingleInstance
+            $global:DSCMachineStatus | Should Be 1
         }
     }
     #endregion

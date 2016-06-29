@@ -43,13 +43,9 @@ try
             Mock -CommandName Get-WinSystemLocale -MockWith { $MockedSystemLocale }
 
             Context 'System Locale is the desired state' {
-                It 'Should not throw exception' {
-                    {
-                        Set-TargetResource `
-                            -SystemLocale $TestSystemLocale `
-                            -IsSingleInstance 'Yes'
-                    } | Should Not Throw
-                }
+                $SystemLocale = Get-TargetResource `
+                    -SystemLocale $TestSystemLocale `
+                    -IsSingleInstance 'Yes'
 
                 It 'Should return hashtable with Key SystemLocale'{
                     $SystemLocale.ContainsKey('SystemLocale') | Should Be $true
@@ -101,13 +97,13 @@ try
 
             It 'Should return true when Test is passed System Locale thats already set' {
                 Test-TargetResource `
-                    -TimeZone 'Pacific Standard Time' `
+                    -SystemLocale $TestSystemLocale `
                     -IsSingleInstance 'Yes' | Should Be $true
             }
 
             It 'Should return false when Test is passed Time Zone that is not set' {
                 Test-TargetResource `
-                    -TimeZone 'Eastern Standard Time' `
+                    -SystemLocale $TestAltSystemLocale `
                     -IsSingleInstance 'Yes' | Should Be $false
             }
         }

@@ -3,7 +3,7 @@ $TestSystemLocale = [PSObject]@{
     IsSingleInstance = 'Yes'
 }
 
-configuration xSystemLocale_Config {
+configuration MSFT_SystemLocale_Config {
     Import-DscResource -ModuleName SystemLocale
     node localhost {
         SystemLocale Integration_Test {

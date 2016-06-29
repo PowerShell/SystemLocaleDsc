@@ -67,9 +67,20 @@ function Set-TargetResource
 
     if ($CurrentSystemLocale.Name -ne $SystemLocale)
     {
+        Set-WinSystemLocale `
+            -SystemLocale $SystemLocale `
+            -ErrorAction Stop
+
         Write-Verbose -Message ( @(
             "$($MyInvocation.MyCommand): "
             $($LocalizedData.SystemLocaleUpdatedMessage)
+            ) -join '' )
+
+        $global:DSCMachineStatus = 1
+
+        Write-Verbose -Message ( @(
+            "$($MyInvocation.MyCommand): "
+            $($LocalizedData.RestartRequiredMessage)
             ) -join '' )
     }
 } # Set-TargetResource
@@ -93,28 +104,20 @@ function Test-TargetResource
             $($LocalizedData.TestingSystemLocaleMessage)
         ) -join '' )
 
-    # Get the current DFSN Server Configuration
-    $ServerConfiguration = Get-DfsnServerConfiguration `
-        -ComputerName $ComputerName `
+    # Get the current System Locale
+    $CurrentSystemLocale = Get-WinSystemLocale `
         -ErrorAction Stop
 
-    # Check each parameter
-    foreach ($parameter in $ParameterList)
+    if ($CurrentSystemLocale.Name -ne $SystemLocale)
     {
-        $ParameterSource = $ServerConfiguration.$($parameter.name)
-        $ParameterNew = (Invoke-Expression -Command "`$$($parameter.name)")
-        if ($PSBoundParameters.ContainsKey($parameter.Name) `
-            -and ($ParameterSource -ne $ParameterNew)) {
-            Write-Verbose -Message ( @(
-                "$($MyInvocation.MyCommand): "
-                $($LocalizedData.SystemLocaleParameterNeedsUpdateMessage) `
-                    -f $parameter.Name,$ParameterSource,$ParameterNew
-                ) -join '' )
-            $desiredConfigurationMatch = $false
-        } # if
-    } # foreach
-
-    return $DesiredConfigurationMatch
+        Write-Verbose -Message ( @(
+            "$($MyInvocation.MyCommand): "
+            $($LocalizedData.SystemLocaleParameterNeedsUpdateMessage -f `
+                $CurrentSystemLocale.Name,$SystemLocale)
+        ) -join '' )
+        return $false
+    }
+    return $true
 } # Test-TargetResource
 
 # Helper Functions

@@ -6,5 +6,5 @@ ConvertFrom-StringData -StringData @'
     SystemLocaleUpdatedMessage=Setting Windows System Locale updated.
     RestartRequiredMessage=Node restart required.
     TestingSystemLocaleMessage=Testing Windows System Locale.
-    SystemLocaleParameterNeedsUpdateMessage=Parameter "{0}" is "{1}" but should be "{2}". Change required.
+    SystemLocaleParameterNeedsUpdateMessage=System Locale is "{0}" but should be "{1}". Change required.
 '@
