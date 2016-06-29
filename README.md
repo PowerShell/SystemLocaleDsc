@@ -1,4 +1,4 @@
-[![Build status](https://ci.appveyor.com/api/projects/status/7m4cwgkr5x4igpck/branch/master?svg=true)](https://ci.appveyor.com/project/PowerShell/SystemLocale/branch/master)
+[![Build status](https://ci.appveyor.com/api/projects/status/sg718xgnvaifasch/branch/master?svg=true)](https://ci.appveyor.com/project/PlagueHO/systemlocale/branch/master)
 
 # SystemLocale
 
