@@ -1,4 +1,4 @@
-$Global:DSCModuleName      = 'SystemLocale'
+$Global:DSCModuleName      = 'SystemLocaleDsc'
 $Global:DSCResourceName    = 'MSFT_SystemLocale'
 
 #region HEADER

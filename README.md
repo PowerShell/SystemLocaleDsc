@@ -2,7 +2,7 @@
 
 # SystemLocale
 
-The **SystemLocale** module the **SystemLocale** DSC resource for setting the system locale on a Windows machine.
+The **SystemLocaleDsc** module contains the **SystemLocale** DSC resource for setting the system locale on a Windows machine.
 To get a list of valid Windows System Locales use the command:
 `[System.Globalization.CultureInfo]::GetCultures([System.Globalization.CultureTypes]::AllCultures).name`
 
@@ -47,7 +47,7 @@ Configuration SetSystemLocale
        [String] $SystemLocale
    )
 
-   Import-DSCResource -ModuleName SystemLocale
+   Import-DSCResource -ModuleName SystemLocaleDsc
 
    Node $NodeName
    {

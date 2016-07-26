@@ -9,7 +9,7 @@ Configuration SetSystemLocale
        [String] $SystemLocale
    )
 
-   Import-DSCResource -ModuleName SystemLocale
+   Import-DSCResource -ModuleName SystemLocaleDsc
 
    Node $NodeName
    {
