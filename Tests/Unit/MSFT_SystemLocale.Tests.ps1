@@ -30,6 +30,7 @@ try
             DisplayName = 'English (United States)'
         }
         $TestAltSystemLocale = 'en-AU'
+        $BadSystemLocale = 'zzz-ZZZ'
 
         Describe 'Schema' {
             it 'IsSingleInstance should be mandatory with one value.' {
@@ -95,16 +96,67 @@ try
         Describe "$($Global:DSCResourceName)\Test-TargetResource" {
             Mock -CommandName Get-WinSystemLocale -MockWith { $MockedSystemLocale }
 
+            It 'Should throw an InvalidSystemLocaleError exception' {
+                $errorId = 'InvalidSystemLocaleError'
+                $errorMessage = ($LocalizedData.InvalidSystemLocaleError -f $BadSystemLocale)
+                $errorCategory = [System.Management.Automation.ErrorCategory]::InvalidArgument
+                $exception = New-Object `
+                    -TypeName System.InvalidOperationException `
+                    -ArgumentList $errorMessage
+                $errorRecord = New-Object `
+                    -TypeName System.Management.Automation.ErrorRecord `
+                    -ArgumentList $exception, $errorId, $errorCategory, $null
+
+                { Test-TargetResource `
+                    -SystemLocale $BadSystemLocale `
+                    -IsSingleInstance 'Yes' } | Should Throw $errorRecord
+            }
+
             It 'Should return true when Test is passed System Locale thats already set' {
                 Test-TargetResource `
                     -SystemLocale $TestSystemLocale `
                     -IsSingleInstance 'Yes' | Should Be $true
             }
 
-            It 'Should return false when Test is passed Time Zone that is not set' {
+            It 'Should return false when Test is passed System Locale that is not set' {
                 Test-TargetResource `
                     -SystemLocale $TestAltSystemLocale `
                     -IsSingleInstance 'Yes' | Should Be $false
+            }
+        }
+
+        Describe "$($Global:DSCResourceName)\Test-SystemLocaleValue" {
+            It 'Should return true when a valid System Locale is passed' {
+                Test-SystemLocaleValue `
+                    -SystemLocale $TestSystemLocale | Should Be $true
+            }
+
+            It 'Should return false when an invalid System Locale is passed' {
+                Test-SystemLocaleValue `
+                    -SystemLocale $BadSystemLocale | Should Be $false
+            }
+        }
+
+        Describe "$($Global:DSCResourceName)\New-TerminatingError" {
+
+            Context 'Create a TestError Exception' {
+
+                It 'should throw an TestError exception' {
+                    $errorId = 'TestError'
+                    $errorCategory = [System.Management.Automation.ErrorCategory]::InvalidArgument
+                    $errorMessage = 'Test Error Message'
+                    $exception = New-Object `
+                        -TypeName System.InvalidOperationException `
+                        -ArgumentList $errorMessage
+                    $errorRecord = New-Object `
+                        -TypeName System.Management.Automation.ErrorRecord `
+                        -ArgumentList $exception, $errorId, $errorCategory, $null
+
+                    { New-TerminatingError `
+                        -ErrorId $errorId `
+                        -ErrorMessage $errorMessage `
+                        -ErrorCategory $errorCategory } | Should Throw $errorRecord
+                }
             }
         }
     } #end InModuleScope $DSCResourceName

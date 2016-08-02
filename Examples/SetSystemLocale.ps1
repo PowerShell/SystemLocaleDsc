@@ -1,6 +1,6 @@
 Configuration SetSystemLocale
 {
-   Param
+   param
    (
        [String[]] $NodeName = $env:COMPUTERNAME,
 

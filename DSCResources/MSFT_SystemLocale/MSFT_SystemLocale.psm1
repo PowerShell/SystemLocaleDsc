@@ -1,14 +1,19 @@
-#region LocalizedData
-$Culture = 'en-us'
-if (Test-Path -Path (Join-Path -Path $PSScriptRoot -ChildPath $PSUICulture))
+#region localizeddata
+if (Test-Path "${PSScriptRoot}\${PSUICulture}")
 {
-    $Culture = $PSUICulture
+    Import-LocalizedData `
+        -BindingVariable LocalizedData `
+        -Filename MSFT_SystemLocale.psd1 `
+        -BaseDirectory "${PSScriptRoot}\${PSUICulture}"
 }
-Import-LocalizedData `
-    -BindingVariable LocalizedData `
-    -Filename MSFT_SystemLocale.psd1 `
-    -BaseDirectory $PSScriptRoot `
-    -UICulture $Culture
+else
+{
+    #fallback to en-US
+    Import-LocalizedData `
+        -BindingVariable LocalizedData `
+        -Filename MSFT_SystemLocale.psd1 `
+        -BaseDirectory "${PSScriptRoot}\en-US"
+}
 #endregion
 
 function Get-TargetResource
@@ -104,6 +109,14 @@ function Test-TargetResource
             $($LocalizedData.TestingSystemLocaleMessage)
         ) -join '' )
 
+
+    if (-not (Test-SystemLocaleValue -SystemLocale $SystemLocale)) {
+        New-TerminatingError `
+            -errorId 'InvalidSystemLocaleError' `
+            -errorMessage ($LocalizedData.InvalidSystemLocaleError -f $SystemLocale) `
+            -errorCategory InvalidArgument
+    } # if
+
     # Get the current System Locale
     $CurrentSystemLocale = Get-WinSystemLocale `
         -ErrorAction Stop
@@ -143,6 +156,25 @@ function New-TerminatingError
         -TypeName System.Management.Automation.ErrorRecord `
         -ArgumentList $exception, $errorId, $errorCategory, $null
     $PSCmdlet.ThrowTerminatingError($errorRecord)
+}
+
+<#
+.SYNOPSIS
+ Checks the provided System Locale against the list of valid cultures.
+#>
+function Test-SystemLocaleValue
+{
+    [CmdletBinding()]
+    [OutputType([Boolean])]
+    param
+    (
+        [Parameter(Mandatory)]
+        [String] $SystemLocale
+    )
+    $ValidCultures = [System.Globalization.CultureInfo]::GetCultures(`
+        [System.Globalization.CultureTypes]::AllCultures`
+        ).name
+    return ($SystemLocale -in $ValidCultures)
 }
 
 Export-ModuleMember -Function *-TargetResource

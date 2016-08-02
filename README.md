@@ -7,7 +7,11 @@ To get a list of valid Windows System Locales use the command:
 `[System.Globalization.CultureInfo]::GetCultures([System.Globalization.CultureTypes]::AllCultures).name`
 
 If the System Locale is changed by this resource, it will require the node to reboot.
-If the LCM is not configured to allow restarting, the configration will not be able to be
+If the LCM is not configured to allow restarting, the configuration will not be able to be applied
+until a manual restart occurs.
+
+This project has adopted the [Microsoft Open Source Code of Conduct](https://opensource.microsoft.com/codeofconduct/).
+For more information see the [Code of Conduct FAQ](https://opensource.microsoft.com/codeofconduct/faq/) or contact [opencode@microsoft.com](mailto:opencode@microsoft.com) with any additional questions or comments.
 
 ## Contributing
 
