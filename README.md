@@ -42,7 +42,7 @@ Set the System Locale to 'ja-JP'
 ```powershell
 Configuration SetSystemLocale
 {
-   Param
+   param
    (
        [String[]] $NodeName = $env:COMPUTERNAME,
 
