@@ -16,17 +16,25 @@ else
 }
 #endregion
 
+<#
+    .SYNOPSIS
+    Returns the current System Local on the node.
+    .PARAMETER IsSingleInstance
+    Specifies the resource is a single instance, the value must be 'Yes'
+    .PARAMETER SystemLocale
+    Specifies the System Locale.
+#>
 function Get-TargetResource
 {
     [CmdletBinding()]
     [OutputType([Hashtable])]
     param
     (
-        [parameter(Mandatory = $true)]
+        [Parameter(Mandatory = $true)]
         [ValidateSet('Yes')]
         [String] $IsSingleInstance,
 
-        [parameter(Mandatory = $true)]
+        [Parameter(Mandatory = $true)]
         [String] $SystemLocale
     )
 
@@ -36,28 +44,36 @@ function Get-TargetResource
         ) -join '' )
 
     # Get the current System Locale
-    $CurrentSystemLocale = Get-WinSystemLocale `
+    $currentSystemLocale = Get-WinSystemLocale `
         -ErrorAction Stop
 
     # Generate the return object.
-    $ReturnValue = @{
+    $returnValue = @{
         IsSingleInstance = 'Yes'
-        SystemLocale     = $CurrentSystemLocale.Name
+        SystemLocale     = $currentSystemLocale.Name
     }
 
-    return $ReturnValue
+    return $returnValue
 } # Get-TargetResource
 
+<#
+    .SYNOPSIS
+    Sets the current System Local on the node.
+    .PARAMETER IsSingleInstance
+    Specifies the resource is a single instance, the value must be 'Yes'
+    .PARAMETER SystemLocale
+    Specifies the System Locale.
+#>
 function Set-TargetResource
 {
     [CmdletBinding()]
     param
     (
-        [parameter(Mandatory = $true)]
+        [Parameter(Mandatory = $true)]
         [ValidateSet('Yes')]
         [String] $IsSingleInstance,
 
-        [parameter(Mandatory = $true)]
+        [Parameter(Mandatory = $true)]
         [String] $SystemLocale
     )
 
@@ -67,10 +83,9 @@ function Set-TargetResource
         ) -join '' )
 
     # Get the current System Locale
-    $CurrentSystemLocale = Get-WinSystemLocale `
+    $currentSystemLocale = Get-WinSystemLocale `
         -ErrorAction Stop
-
-    if ($CurrentSystemLocale.Name -ne $SystemLocale)
+    if ($currentSystemLocale.Name -ne $SystemLocale)
     {
         Set-WinSystemLocale `
             -SystemLocale $SystemLocale `
@@ -90,17 +105,27 @@ function Set-TargetResource
     }
 } # Set-TargetResource
 
+<#
+    .SYNOPSIS
+    Tests if the current System Local on the node needs to be changed.
+    .PARAMETER IsSingleInstance
+    Specifies the resource is a single instance, the value must be 'Yes'
+    .PARAMETER SystemLocale
+    Specifies the System Locale.
+    .OUTPUTS
+    Returns false if the System Locale needs to be changed or true if it is correct.
+#>
 function Test-TargetResource
 {
     [CmdletBinding()]
     [OutputType([System.Boolean])]
     param
     (
-        [parameter(Mandatory = $true)]
+        [Parameter(Mandatory = $true)]
         [ValidateSet('Yes')]
         [String] $IsSingleInstance,
 
-        [parameter(Mandatory = $true)]
+        [Parameter(Mandatory = $true)]
         [String] $SystemLocale
     )
 
@@ -118,15 +143,15 @@ function Test-TargetResource
     } # if
 
     # Get the current System Locale
-    $CurrentSystemLocale = Get-WinSystemLocale `
+    $currentSystemLocale = Get-WinSystemLocale `
         -ErrorAction Stop
 
-    if ($CurrentSystemLocale.Name -ne $SystemLocale)
+    if ($currentSystemLocale.Name -ne $SystemLocale)
     {
         Write-Verbose -Message ( @(
             "$($MyInvocation.MyCommand): "
             $($LocalizedData.SystemLocaleParameterNeedsUpdateMessage -f `
-                $CurrentSystemLocale.Name,$SystemLocale)
+                $currentSystemLocale.Name,$SystemLocale)
         ) -join '' )
         return $false
     }
@@ -134,6 +159,16 @@ function Test-TargetResource
 } # Test-TargetResource
 
 # Helper Functions
+<#
+    .SYNOPSIS
+    Throw a custome exception.
+    .PARAMETER ErrorId
+    The identifier representing the exception being thrown.
+    .PARAMETER ErrorMessage
+    The error message to be used for this exception.
+    .PARAMETER ErrorCategory
+    The exception error category.
+#>
 function New-TerminatingError
 {
     [CmdletBinding()]
@@ -159,8 +194,10 @@ function New-TerminatingError
 }
 
 <#
-.SYNOPSIS
- Checks the provided System Locale against the list of valid cultures.
+    .SYNOPSIS
+    Checks the provided System Locale against the list of valid cultures.
+    .PARAMETER SystemLocale
+    The System Locale to check the validitiy of.
 #>
 function Test-SystemLocaleValue
 {
@@ -171,10 +208,10 @@ function Test-SystemLocaleValue
         [Parameter(Mandatory)]
         [String] $SystemLocale
     )
-    $ValidCultures = [System.Globalization.CultureInfo]::GetCultures(`
+    $validCultures = [System.Globalization.CultureInfo]::GetCultures(`
         [System.Globalization.CultureTypes]::AllCultures`
         ).name
-    return ($SystemLocale -in $ValidCultures)
+    return ($SystemLocale -in $validCultures)
 }
 
 Export-ModuleMember -Function *-TargetResource

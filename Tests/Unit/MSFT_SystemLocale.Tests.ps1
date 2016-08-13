@@ -1,5 +1,5 @@
-﻿$Global:DSCModuleName      = 'SystemLocaleDsc'
-$Global:DSCResourceName    = 'MSFT_SystemLocale'
+﻿$script:DSCModuleName      = 'SystemLocaleDsc'
+$script:DSCResourceName    = 'MSFT_SystemLocale'
 
 #region HEADER
 # Unit Test Template Version: 1.1.0
@@ -12,8 +12,8 @@ if ( (-not (Test-Path -Path (Join-Path -Path $moduleRoot -ChildPath 'DSCResource
 
 Import-Module (Join-Path -Path $moduleRoot -ChildPath 'DSCResource.Tests\TestHelper.psm1') -Force
 $TestEnvironment = Initialize-TestEnvironment `
-    -DSCModuleName $Global:DSCModuleName `
-    -DSCResourceName $Global:DSCResourceName `
+    -DSCModuleName $script:DSCModuleName `
+    -DSCResourceName $script:DSCResourceName `
     -TestType Unit
 #endregion HEADER
 
@@ -21,123 +21,145 @@ $TestEnvironment = Initialize-TestEnvironment `
 try
 {
     #region Pester Tests
+    $testSystemLocale = 'en-US'
+    $testAltSystemLocale = 'en-AU'
+    $badSystemLocale = 'zzz-ZZZ'
+    $localizedData = InModuleScope $script:DSCResourceName {
+       $LocalizedData
+    }
 
-    InModuleScope $Global:DSCResourceName {
-        $TestSystemLocale = 'en-US'
-        $MockedSystemLocale = @{
-            LCID        = '1033'
-            Name        = $TestSystemLocale
-            DisplayName = 'English (United States)'
+    Describe 'Schema' {
+        it 'IsSingleInstance should be mandatory with one value.' {
+            $systemLocaleResource = Get-DscResource -Name SystemLocale
+            $systemLocaleResource.Properties.Where{$_.Name -eq 'IsSingleInstance'}.IsMandatory | should be $true
+            $systemLocaleResource.Properties.Where{$_.Name -eq 'IsSingleInstance'}.Values | should be 'Yes'
         }
-        $TestAltSystemLocale = 'en-AU'
-        $BadSystemLocale = 'zzz-ZZZ'
+    }
 
-        Describe 'Schema' {
-            it 'IsSingleInstance should be mandatory with one value.' {
-                $SystemLocaleResource = Get-DscResource -Name SystemLocale
-                $SystemLocaleResource.Properties.Where{$_.Name -eq 'IsSingleInstance'}.IsMandatory | should be $true
-                $SystemLocaleResource.Properties.Where{$_.Name -eq 'IsSingleInstance'}.Values | should be 'Yes'
-            }
-        }
+    Describe "$($script:DSCResourceName)\Get-TargetResource" {
+        Mock -CommandName Get-WinSystemLocale `
+            -ModuleName $($script:DSCResourceName) `
+            -MockWith { @{
+                LCID        = '1033'
+                Name        = 'en-US'
+                DisplayName = 'English (United States)'
+            } }
 
-        Describe "$($Global:DSCResourceName)\Get-TargetResource" {
-            Mock -CommandName Get-WinSystemLocale -MockWith { $MockedSystemLocale }
+        Context 'System Locale is the desired state' {
+            $systemLocale = Get-TargetResource `
+                -SystemLocale $testSystemLocale `
+                -IsSingleInstance 'Yes'
 
-            Context 'System Locale is the desired state' {
-                $SystemLocale = Get-TargetResource `
-                    -SystemLocale $TestSystemLocale `
-                    -IsSingleInstance 'Yes'
-
-                It 'Should return hashtable with Key SystemLocale'{
-                    $SystemLocale.ContainsKey('SystemLocale') | Should Be $true
-                }
-
-                It "Should return hashtable with Value that matches '$TestSystemLocale'" {
-                    $SystemLocale.SystemLocale = $TestSystemLocale
-                }
-            }
-        }
-
-        Describe "$($Global:DSCResourceName)\Set-TargetResource" {
-            Mock -CommandName Set-WinSystemLocale
-            Mock -CommandName Get-WinSystemLocale -MockWith { $MockedSystemLocale }
-
-            Context 'System Locale is the desired state' {
-                It 'Should not throw exception' {
-                    {
-                        Set-TargetResource `
-                            -SystemLocale $TestSystemLocale `
-                            -IsSingleInstance 'Yes'
-                    } | Should Not Throw
-                }
-                It 'Should not call Set-WinSystemLocale' {
-                    Assert-MockCalled `
-                        -CommandName Set-WinSystemLocale `
-                        -Exactly 0
-                }
+            It 'Should return hashtable with Key SystemLocale'{
+                $systemLocale.ContainsKey('SystemLocale') | Should Be $true
             }
 
-            Context 'System Locale is not in the desired state' {
-                It 'Should not throw exception' {
-                    {
-                        Set-TargetResource `
-                            -SystemLocale $TestAltSystemLocale `
-                            -IsSingleInstance 'Yes'
-                    } | Should Not Throw
-                }
-                It 'Should call Set-WinSystemLocale' {
-                    Assert-MockCalled `
-                        -CommandName Set-WinSystemLocale `
-                        -Exactly 1
-                }
+            It "Should return hashtable with Value that matches '$testSystemLocale'" {
+                $systemLocale.SystemLocale = $testSystemLocale
+            }
+        }
+    }
+
+    Describe "$($script:DSCResourceName)\Set-TargetResource" {
+        Mock -CommandName Get-WinSystemLocale `
+            -ModuleName $($script:DSCResourceName) `
+            -MockWith { @{
+                LCID        = '1033'
+                Name        = 'en-US'
+                DisplayName = 'English (United States)'
+            } }
+        Mock -CommandName Set-WinSystemLocale `
+            -ModuleName $($script:DSCResourceName)
+        Context 'System Locale is the desired state' {
+            It 'Should not throw exception' {
+                {
+                    Set-TargetResource `
+                        -SystemLocale $testSystemLocale `
+                        -IsSingleInstance 'Yes'
+                } | Should Not Throw
+            }
+            It 'Should not call Set-WinSystemLocale' {
+                Assert-MockCalled `
+                    -CommandName Set-WinSystemLocale `
+                    -ModuleName $($script:DSCResourceName) `
+                    -Exactly 0
             }
         }
 
-        Describe "$($Global:DSCResourceName)\Test-TargetResource" {
-            Mock -CommandName Get-WinSystemLocale -MockWith { $MockedSystemLocale }
-
-            It 'Should throw an InvalidSystemLocaleError exception' {
-                $errorId = 'InvalidSystemLocaleError'
-                $errorMessage = ($LocalizedData.InvalidSystemLocaleError -f $BadSystemLocale)
-                $errorCategory = [System.Management.Automation.ErrorCategory]::InvalidArgument
-                $exception = New-Object `
-                    -TypeName System.InvalidOperationException `
-                    -ArgumentList $errorMessage
-                $errorRecord = New-Object `
-                    -TypeName System.Management.Automation.ErrorRecord `
-                    -ArgumentList $exception, $errorId, $errorCategory, $null
-
-                { Test-TargetResource `
-                    -SystemLocale $BadSystemLocale `
-                    -IsSingleInstance 'Yes' } | Should Throw $errorRecord
+        Context 'System Locale is not in the desired state' {
+            It 'Should not throw exception' {
+                {
+                    Set-TargetResource `
+                        -SystemLocale $testAltSystemLocale `
+                        -IsSingleInstance 'Yes'
+                } | Should Not Throw
             }
-
-            It 'Should return true when Test is passed System Locale thats already set' {
-                Test-TargetResource `
-                    -SystemLocale $TestSystemLocale `
-                    -IsSingleInstance 'Yes' | Should Be $true
-            }
-
-            It 'Should return false when Test is passed System Locale that is not set' {
-                Test-TargetResource `
-                    -SystemLocale $TestAltSystemLocale `
-                    -IsSingleInstance 'Yes' | Should Be $false
+            It 'Should call Set-WinSystemLocale' {
+                Assert-MockCalled `
+                    -CommandName Set-WinSystemLocale `
+                    -ModuleName $($script:DSCResourceName) `
+                    -Exactly 1
             }
         }
+    }
 
-        Describe "$($Global:DSCResourceName)\Test-SystemLocaleValue" {
+    Describe "$($script:DSCResourceName)\Test-TargetResource" {
+        Mock -CommandName Get-WinSystemLocale `
+            -ModuleName $($script:DSCResourceName) `
+            -MockWith { @{
+                LCID        = '1033'
+                Name        = 'en-US'
+                DisplayName = 'English (United States)'
+            } }
+
+        It 'Should throw an InvalidSystemLocaleError exception' {
+            $errorId = 'InvalidSystemLocaleError'
+            $errorMessage = ($localizedData.InvalidSystemLocaleError -f $badSystemLocale)
+            $errorCategory = [System.Management.Automation.ErrorCategory]::InvalidArgument
+            $exception = New-Object `
+                -TypeName System.InvalidOperationException `
+                -ArgumentList $errorMessage
+            $errorRecord = New-Object `
+                -TypeName System.Management.Automation.ErrorRecord `
+                -ArgumentList $exception, $errorId, $errorCategory, $null
+
+            { Test-TargetResource `
+                -SystemLocale $badSystemLocale `
+                -IsSingleInstance 'Yes' } | Should Throw $errorRecord
+        }
+
+        It 'Should return true when Test is passed System Locale that is already set' {
+            Test-TargetResource `
+                -SystemLocale $testSystemLocale `
+                -IsSingleInstance 'Yes' | Should Be $true
+        }
+
+        It 'Should return false when Test is passed System Locale that is not set' {
+            Test-TargetResource `
+                -SystemLocale $testAltSystemLocale `
+                -IsSingleInstance 'Yes' | Should Be $false
+        }
+    }
+
+    InModuleScope $script:DSCResourceName {
+        # Redeclare these variables so that they can be accessed within the InModuleScope block
+        $script:DSCResourceName = 'MSFT_SystemLocale'
+        $testSystemLocale = 'en-US'
+        $badSystemLocale = 'zzz-ZZZ'
+
+        Describe "$($script:DSCResourceName)\Test-SystemLocaleValue" {
             It 'Should return true when a valid System Locale is passed' {
                 Test-SystemLocaleValue `
-                    -SystemLocale $TestSystemLocale | Should Be $true
+                    -SystemLocale $testSystemLocale | Should Be $true
             }
 
             It 'Should return false when an invalid System Locale is passed' {
                 Test-SystemLocaleValue `
-                    -SystemLocale $BadSystemLocale | Should Be $false
+                    -SystemLocale $badSystemLocale | Should Be $false
             }
         }
 
-        Describe "$($Global:DSCResourceName)\New-TerminatingError" {
+        Describe "$($script:DSCResourceName)\New-TerminatingError" {
 
             Context 'Create a TestError Exception' {
 

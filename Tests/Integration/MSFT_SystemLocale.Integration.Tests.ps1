@@ -1,5 +1,5 @@
-$Global:DSCModuleName      = 'SystemLocaleDsc'
-$Global:DSCResourceName    = 'MSFT_SystemLocale'
+$script:DSCModuleName      = 'SystemLocaleDsc'
+$script:DSCResourceName    = 'MSFT_SystemLocale'
 
 #region HEADER
 # Integration Test Template Version: 1.1.0
@@ -12,13 +12,13 @@ if ( (-not (Test-Path -Path (Join-Path -Path $moduleRoot -ChildPath 'DSCResource
 
 Import-Module (Join-Path -Path $moduleRoot -ChildPath 'DSCResource.Tests\TestHelper.psm1') -Force
 $TestEnvironment = Initialize-TestEnvironment `
-    -DSCModuleName $Global:DSCModuleName `
-    -DSCResourceName $Global:DSCResourceName `
+    -DSCModuleName $script:DSCModuleName `
+    -DSCResourceName $script:DSCResourceName `
     -TestType Integration
 #endregion
 
 # Store the test machine system locale
-$CurrentSystemLocale = (Get-WinSystemLocale).Name
+$currentSystemLocale = (Get-WinSystemLocale).Name
 # Change the current system locale so that a complete test occurs.
 Set-WinSystemLocale -SystemLocale 'kl-GL'
 
@@ -26,14 +26,14 @@ Set-WinSystemLocale -SystemLocale 'kl-GL'
 try
 {
     #region Integration Tests
-    $ConfigFile = Join-Path -Path $PSScriptRoot -ChildPath "$($Global:DSCResourceName).config.ps1"
+    $ConfigFile = Join-Path -Path $PSScriptRoot -ChildPath "$($script:DSCResourceName).config.ps1"
     . $ConfigFile -Verbose -ErrorAction Stop
 
-    Describe "$($Global:DSCResourceName)_Integration" {
+    Describe "$($script:DSCResourceName)_Integration" {
         #region DEFAULT TESTS
         It 'Should compile without throwing' {
             {
-                & "$($Global:DSCResourceName)_Config" -OutputPath $TestEnvironment.WorkingFolder
+                & "$($script:DSCResourceName)_Config" -OutputPath $TestEnvironment.WorkingFolder
                 Start-DscConfiguration -Path $TestEnvironment.WorkingFolder -ComputerName localhost -Wait -Verbose -Force
             } | Should not throw
         }
@@ -45,10 +45,9 @@ try
 
         It 'Should have set the resource and all the parameters should match' {
             $current = Get-DscConfiguration | Where-Object {
-                $_.ConfigurationName -eq "$($Global:DSCResourceName)_Config"
+                $_.ConfigurationName -eq "$($script:DSCResourceName)_Config"
             }
             # A reboot would need to occur before this node can be bought into alignment
-            # $current.SystemLocale     | Should Be $TestSystemLocale.SystemLocale
             $current.IsSingleInstance | Should Be $TestSystemLocale.IsSingleInstance
         }
     }
@@ -57,7 +56,7 @@ try
 finally
 {
     # Restore the test machine system locale
-    Set-WinSystemLocale -SystemLocale $CurrentSystemLocale
+    Set-WinSystemLocale -SystemLocale $currentSystemLocale
 
     #region FOOTER
     Restore-TestEnvironment -TestEnvironment $TestEnvironment

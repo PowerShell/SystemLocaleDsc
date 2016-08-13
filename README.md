@@ -1,4 +1,5 @@
-[![Build status](https://ci.appveyor.com/api/projects/status/6fc4k4ef9isqsu6m/branch/dev?svg=true)](https://ci.appveyor.com/project/PlagueHO/systemlocaledsc/branch/dev)
+[![Build status](https://ci.appveyor.com/api/projects/status/6fc4k4ef9isqsu6m?svg=true)](https://ci.appveyor.com/project/PlagueHO/systemlocaledsc)
+
 
 # SystemLocale
 
@@ -31,13 +32,13 @@ Please check out common DSC Resources [contributing guidelines](https://github.c
 
 ### 1.0.0.0
 
-* SystemLocale: Initial release.
+* SystemLocaleDsc: Initial release.
 
 ## Examples
 
-### Setting the System Local
+### Setting the System Locale
 
-Set the System Locale to 'ja-JP'
+This example will set the System Locale of LocalHost to 'ja-JP'.
 
 ```powershell
 Configuration SetSystemLocale
