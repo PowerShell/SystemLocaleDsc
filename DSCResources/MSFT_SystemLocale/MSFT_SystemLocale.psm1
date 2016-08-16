@@ -58,7 +58,7 @@ function Get-TargetResource
 
 <#
     .SYNOPSIS
-    Sets the current System Local on the node.
+    Sets the current System Locale on the node.
     .PARAMETER IsSingleInstance
     Specifies the resource is a single instance, the value must be 'Yes'
     .PARAMETER SystemLocale
@@ -107,7 +107,7 @@ function Set-TargetResource
 
 <#
     .SYNOPSIS
-    Tests if the current System Local on the node needs to be changed.
+    Tests if the current System Locale on the node needs to be changed.
     .PARAMETER IsSingleInstance
     Specifies the resource is a single instance, the value must be 'Yes'
     .PARAMETER SystemLocale
