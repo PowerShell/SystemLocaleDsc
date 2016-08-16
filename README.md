@@ -1,4 +1,5 @@
-[![Build status](https://ci.appveyor.com/api/projects/status/6fc4k4ef9isqsu6m/branch/dev?svg=true)](https://ci.appveyor.com/project/PlagueHO/systemlocaledsc/branch/dev)
+[![Build status](https://ci.appveyor.com/api/projects/status/6fc4k4ef9isqsu6m?svg=true)](https://ci.appveyor.com/project/PlagueHO/systemlocaledsc)
+
 
 # SystemLocale
 
@@ -7,7 +8,11 @@ To get a list of valid Windows System Locales use the command:
 `[System.Globalization.CultureInfo]::GetCultures([System.Globalization.CultureTypes]::AllCultures).name`
 
 If the System Locale is changed by this resource, it will require the node to reboot.
-If the LCM is not configured to allow restarting, the configration will not be able to be
+If the LCM is not configured to allow restarting, the configuration will not be able to be applied
+until a manual restart occurs.
+
+This project has adopted the [Microsoft Open Source Code of Conduct](https://opensource.microsoft.com/codeofconduct/).
+For more information see the [Code of Conduct FAQ](https://opensource.microsoft.com/codeofconduct/faq/) or contact [opencode@microsoft.com](mailto:opencode@microsoft.com) with any additional questions or comments.
 
 ## Contributing
 
@@ -27,18 +32,18 @@ Please check out common DSC Resources [contributing guidelines](https://github.c
 
 ### 1.0.0.0
 
-* SystemLocale: Initial release.
+* SystemLocaleDsc: Initial release.
 
 ## Examples
 
-### Setting the System Local
+### Setting the System Locale
 
-Set the System Locale to 'ja-JP'
+This example will set the System Locale of LocalHost to 'ja-JP'.
 
 ```powershell
 Configuration SetSystemLocale
 {
-   Param
+   param
    (
        [String[]] $NodeName = $env:COMPUTERNAME,
 
