@@ -1,6 +1,10 @@
+<#
+    This example will set the System Locale of LocalHost to 'ja-JP'.
+    To use this example, run it using PowerShell.
+#>
 Configuration SetSystemLocale
 {
-   Param
+   param
    (
        [String[]] $NodeName = $env:COMPUTERNAME,
 

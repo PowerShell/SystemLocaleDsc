@@ -42,16 +42,16 @@ PrivateData = @{
         Tags = @('DesiredStateConfiguration', 'DSC', 'DSCResourceKit', 'DSCResource', 'SystemLocale')
 
         # A URL to the license for this module.
-        LicenseUri = 'https://github.com/PowerShell/SystemLocale/blob/master/LICENSE'
+        LicenseUri = 'https://github.com/PowerShell/SystemLocaleDsc/blob/master/LICENSE'
 
         # A URL to the main website for this project.
-        ProjectUri = 'https://github.com/PowerShell/SystemLocale'
+        ProjectUri = 'https://github.com/PowerShell/SystemLocaleDsc'
 
         # A URL to an icon representing this module.
         # IconUri = ''
 
         # ReleaseNotes of this module
-        ReleaseNotes = '* SystemLocale: Initial Release.'
+        ReleaseNotes = '* SystemLocaleDsc: Initial Release.'
 
     } # End of PSData hashtable
 
