@@ -1,7 +1,7 @@
 [![Build status](https://ci.appveyor.com/api/projects/status/6fc4k4ef9isqsu6m?svg=true)](https://ci.appveyor.com/project/PlagueHO/systemlocaledsc)
 
 
-# SystemLocale
+# SystemLocaleDsc
 
 The **SystemLocaleDsc** module contains the **SystemLocale** DSC resource for setting the system locale on a Windows machine.
 To get a list of valid Windows System Locales use the command:
