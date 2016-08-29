@@ -30,6 +30,8 @@ Please check out common DSC Resources [contributing guidelines](https://github.c
 
 ### Unreleased
 
+* Fix AppVeyor.yml build process.
+
 ### 1.0.0.0
 
 * SystemLocaleDsc: Initial release.
