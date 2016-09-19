@@ -1,4 +1,4 @@
-[![Build status](https://ci.appveyor.com/api/projects/status/6fc4k4ef9isqsu6m?svg=true)](https://ci.appveyor.com/project/PlagueHO/systemlocaledsc)
+[![Build status](https://ci.appveyor.com/api/projects/status/i9vo21txuwm2hjk7?svg=true)](https://ci.appveyor.com/project/PowerShell/systemlocaledsc)
 
 
 # SystemLocaleDsc
