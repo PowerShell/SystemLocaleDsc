@@ -31,6 +31,7 @@ Please check out common DSC Resources [contributing guidelines](https://github.c
 ### Unreleased
 
 * Fix AppVeyor.yml build process.
+* Convert Get-TargetResource to output IsSingleInstance value passed in as parameter.
 
 ### 1.0.0.0
 
