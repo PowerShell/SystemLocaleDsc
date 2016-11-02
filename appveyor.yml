@@ -1,9 +1,10 @@
 #---------------------------------#
 #      environment configuration  #
 #---------------------------------#
-version: 1.0.{build}.0
+version: 1.1.{build}.0
 install:
-  - ps: |
+    - git clone https://github.com/PowerShell/DscResource.Tests
+    - ps: |
         Import-Module .\DscResource.Tests\TestHelper.psm1 -force
         Install-PackageProvider -Name NuGet -MinimumVersion 2.8.5.201 -Force
         Install-Module -Name Pester -Repository PSGallery -Force
@@ -35,8 +36,8 @@ deploy_script:
   - ps: |
       # Creating project artifact
       $stagingDirectory = (Resolve-Path ..).Path
-      $manifest = Join-Path $pwd "SystemLocale.psd1"
-      (Get-Content $manifest -Raw).Replace("1.4.0.0", $env:APPVEYOR_BUILD_VERSION) | Out-File $manifest
+      $manifest = Join-Path $pwd "SystemLocaleDsc.psd1"
+      (Get-Content $manifest -Raw).Replace("1.1.0.0", $env:APPVEYOR_BUILD_VERSION) | Out-File $manifest
       $zipFilePath = Join-Path $stagingDirectory "$(Split-Path $pwd -Leaf).zip"
       Add-Type -assemblyname System.IO.Compression.FileSystem
       [System.IO.Compression.ZipFile]::CreateFromDirectory($pwd, $zipFilePath)

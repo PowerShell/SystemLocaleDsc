@@ -1,7 +1,7 @@
-[![Build status](https://ci.appveyor.com/api/projects/status/6fc4k4ef9isqsu6m?svg=true)](https://ci.appveyor.com/project/PlagueHO/systemlocaledsc)
+[![Build status](https://ci.appveyor.com/api/projects/status/i9vo21txuwm2hjk7?svg=true)](https://ci.appveyor.com/project/PowerShell/systemlocaledsc)
 
 
-# SystemLocale
+# SystemLocaleDsc
 
 The **SystemLocaleDsc** module contains the **SystemLocale** DSC resource for setting the system locale on a Windows machine.
 To get a list of valid Windows System Locales use the command:
@@ -29,6 +29,11 @@ Please check out common DSC Resources [contributing guidelines](https://github.c
 ## Versions
 
 ### Unreleased
+
+### 1.1.0.0
+
+* Fix AppVeyor.yml build process.
+* Convert Get-TargetResource to output IsSingleInstance value passed in as parameter.
 
 ### 1.0.0.0
 
