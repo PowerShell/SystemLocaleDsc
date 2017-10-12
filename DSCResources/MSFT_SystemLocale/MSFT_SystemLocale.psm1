@@ -2,8 +2,8 @@ $modulePath = Join-Path -Path (Split-Path -Path (Split-Path -Path $PSScriptRoot 
 
 # Import the Networking Resource Helper Module
 Import-Module -Name (Join-Path -Path $modulePath `
-        -ChildPath (Join-Path -Path 'TimeZoneDsc.ResourceHelper' `
-            -ChildPath 'TimeZoneDsc.ResourceHelper.psm1'))
+        -ChildPath (Join-Path -Path 'SystemLocaleDsc.ResourceHelper' `
+            -ChildPath 'SystemLocaleDsc.ResourceHelper.psm1'))
 
 # Import Localization Strings
 $LocalizedData = Get-LocalizedData `
