@@ -1,5 +1,7 @@
-﻿$script:DSCModuleName      = 'SystemLocaleDsc'
+$script:DSCModuleName      = 'SystemLocaleDsc'
 $script:DSCResourceName    = 'MSFT_SystemLocale'
+
+Import-Module -Name (Join-Path -Path (Join-Path -Path (Split-Path $PSScriptRoot -Parent) -ChildPath 'TestHelpers') -ChildPath 'CommonTestHelper.psm1') -Global
 
 #region HEADER
 # Unit Test Template Version: 1.1.0
@@ -112,16 +114,10 @@ try
                 DisplayName = 'English (United States)'
             } }
 
-        It 'Should throw an InvalidSystemLocaleError exception' {
-            $errorId = 'InvalidSystemLocaleError'
-            $errorMessage = ($localizedData.InvalidSystemLocaleError -f $badSystemLocale)
-            $errorCategory = [System.Management.Automation.ErrorCategory]::InvalidArgument
-            $exception = New-Object `
-                -TypeName System.InvalidOperationException `
-                -ArgumentList $errorMessage
-            $errorRecord = New-Object `
-                -TypeName System.Management.Automation.ErrorRecord `
-                -ArgumentList $exception, $errorId, $errorCategory, $null
+        It 'Should throw the expected exception' {
+            $errorRecord = Get-InvalidArgumentRecord `
+                -Message ($localizedData.InvalidSystemLocaleError -f $badSystemLocale) `
+                -ArgumentName 'SystemLocale'
 
             { Test-TargetResource `
                 -SystemLocale $badSystemLocale `
