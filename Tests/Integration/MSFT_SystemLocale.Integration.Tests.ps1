@@ -67,7 +67,6 @@ try
                 $_.ConfigurationName -eq "$($script:DSCResourceName)_Config"
             }
             # A reboot would need to occur before this node can be bought into alignment
-            $current.SystemLocale     | Should Be $configData.AllNodes[0].SystemLocale
             $current.IsSingleInstance | Should Be $configData.AllNodes[0].IsSingleInstance
         }
     }
