@@ -66,9 +66,11 @@ try
             $current = Get-DscConfiguration | Where-Object {
                 $_.ConfigurationName -eq "$($script:DSCResourceName)_Config"
             }
-            # A reboot would need to occur before this node can be bought into alignment
+            <#
+                A reboot would need to occur before this node can be bought into alignment.
+                Therefore a test for the new SystemLocale can not be automated.
+            #>
             $current.IsSingleInstance | Should Be $configData.AllNodes[0].IsSingleInstance
-            $current.SystemLocale     | Should Be 'fr-FR'
         }
     }
     #endregion
