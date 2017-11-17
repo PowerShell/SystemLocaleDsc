@@ -46,7 +46,7 @@ Please check out common DSC Resources [contributing guidelines](https://github.c
 * **IsSingleInstance**: Specifies if the resource is a single instance, the value
   must be 'Yes'
 
-### SystemLocaleDsc Examples
+### SystemLocale Examples
 
 * [Set the System Locale of the computer](/Examples/Resources/SystemLocaleDsc/1-SetSystemLocale.ps1)
 

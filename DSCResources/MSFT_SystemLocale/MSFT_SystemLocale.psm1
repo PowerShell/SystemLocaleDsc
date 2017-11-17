@@ -28,7 +28,7 @@ $LocalizedData = Get-LocalizedData `
 function Get-TargetResource
 {
     [CmdletBinding()]
-    [OutputType([Hashtable])]
+    [OutputType([System.Collections.Hashtable])]
     param
     (
         [Parameter(Mandatory = $true)]
@@ -128,6 +128,8 @@ function Set-TargetResource
 #>
 function Test-TargetResource
 {
+    # Suppressing this rule because $global:DSCMachineStatus is used to trigger a reboot.
+    [Diagnostics.CodeAnalysis.SuppressMessageAttribute('PSAvoidGlobalVars', '', Scope = 'Function')]
     [CmdletBinding()]
     [OutputType([System.Boolean])]
     param
@@ -185,7 +187,8 @@ function Test-SystemLocaleValue
     param
     (
         [Parameter(Mandatory = $true)]
-        [System.String] $SystemLocale
+        [System.String]
+        $SystemLocale
     )
 
     $validCultures = [System.Globalization.CultureInfo]::GetCultures(`

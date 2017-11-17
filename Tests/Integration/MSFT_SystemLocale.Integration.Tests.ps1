@@ -54,11 +54,11 @@ try
                     -Verbose `
                     -Force `
                     -ErrorAction Stop
-            } | Should not throw
+            } | Should Not Throw
         }
 
         It 'Should be able to call Get-DscConfiguration without throwing' {
-            { Get-DscConfiguration -Verbose -ErrorAction Stop } | Should Not throw
+            { Get-DscConfiguration -Verbose -ErrorAction Stop } | Should Not Throw
         }
         #endregion
 
@@ -68,6 +68,7 @@ try
             }
             # A reboot would need to occur before this node can be bought into alignment
             $current.IsSingleInstance | Should Be $configData.AllNodes[0].IsSingleInstance
+            $current.SystemLocale     | Should Be 'fr-FR'
         }
     }
     #endregion
