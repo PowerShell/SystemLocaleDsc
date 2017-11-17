@@ -1,3 +1,12 @@
+<#
+    Suppressing this rule because $global:DSCMachineStatus is used to trigger a reboot.
+    This rule must be suppressed at the script script scope.
+#>
+[Diagnostics.CodeAnalysis.SuppressMessageAttribute('PSAvoidGlobalVars', '')]
+param
+(
+)
+
 $modulePath = Join-Path -Path (Split-Path -Path (Split-Path -Path $PSScriptRoot -Parent) -Parent) -ChildPath 'Modules'
 
 # Import the Networking Resource Helper Module
@@ -123,8 +132,6 @@ function Set-TargetResource
 #>
 function Test-TargetResource
 {
-    # Suppressing this rule because $global:DSCMachineStatus is used to trigger a reboot.
-    [Diagnostics.CodeAnalysis.SuppressMessageAttribute('PSAvoidGlobalVars', '', Scope = 'Function')]
     [CmdletBinding()]
     [OutputType([System.Boolean])]
     param
