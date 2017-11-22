@@ -1,13 +1,15 @@
-﻿$script:DSCModuleName      = 'SystemLocaleDsc'
-$script:DSCResourceName    = 'MSFT_SystemLocale'
+$script:DSCModuleName = 'SystemLocaleDsc'
+$script:DSCResourceName = 'MSFT_SystemLocale'
+
+Import-Module -Name (Join-Path -Path (Join-Path -Path (Split-Path $PSScriptRoot -Parent) -ChildPath 'TestHelpers') -ChildPath 'CommonTestHelper.psm1') -Global
 
 #region HEADER
 # Unit Test Template Version: 1.1.0
 [String] $moduleRoot = Split-Path -Parent (Split-Path -Parent (Split-Path -Parent $Script:MyInvocation.MyCommand.Path))
 if ( (-not (Test-Path -Path (Join-Path -Path $moduleRoot -ChildPath 'DSCResource.Tests'))) -or `
-     (-not (Test-Path -Path (Join-Path -Path $moduleRoot -ChildPath 'DSCResource.Tests\TestHelper.psm1'))) )
+    (-not (Test-Path -Path (Join-Path -Path $moduleRoot -ChildPath 'DSCResource.Tests\TestHelper.psm1'))) )
 {
-    & git @('clone','https://github.com/PowerShell/DscResource.Tests.git',(Join-Path -Path $moduleRoot -ChildPath '\DSCResource.Tests\'))
+    & git @('clone', 'https://github.com/PowerShell/DscResource.Tests.git', (Join-Path -Path $moduleRoot -ChildPath '\DSCResource.Tests\'))
 }
 
 Import-Module (Join-Path -Path $moduleRoot -ChildPath 'DSCResource.Tests\TestHelper.psm1') -Force
@@ -25,14 +27,18 @@ try
     $testAltSystemLocale = 'en-AU'
     $badSystemLocale = 'zzz-ZZZ'
     $localizedData = InModuleScope $script:DSCResourceName {
-       $LocalizedData
+        $LocalizedData
     }
 
     Describe 'Schema' {
         it 'IsSingleInstance should be mandatory with one value.' {
             $systemLocaleResource = Get-DscResource -Name SystemLocale
-            $systemLocaleResource.Properties.Where{$_.Name -eq 'IsSingleInstance'}.IsMandatory | should be $true
-            $systemLocaleResource.Properties.Where{$_.Name -eq 'IsSingleInstance'}.Values | should be 'Yes'
+            $systemLocaleResource.Properties.Where{
+                $_.Name -eq 'IsSingleInstance'
+            }.IsMandatory | Should Be $true
+            $systemLocaleResource.Properties.Where{
+                $_.Name -eq 'IsSingleInstance'
+            }.Values | Should Be 'Yes'
         }
     }
 
@@ -50,7 +56,7 @@ try
                 -SystemLocale $testSystemLocale `
                 -IsSingleInstance 'Yes'
 
-            It 'Should return hashtable with Key SystemLocale'{
+            It 'Should return hashtable with Key SystemLocale' {
                 $systemLocale.ContainsKey('SystemLocale') | Should Be $true
             }
 
@@ -68,8 +74,10 @@ try
                 Name        = 'en-US'
                 DisplayName = 'English (United States)'
             } }
+
         Mock -CommandName Set-WinSystemLocale `
             -ModuleName $($script:DSCResourceName)
+
         Context 'System Locale is the desired state' {
             It 'Should not throw exception' {
                 {
@@ -78,6 +86,7 @@ try
                         -IsSingleInstance 'Yes'
                 } | Should Not Throw
             }
+
             It 'Should not call Set-WinSystemLocale' {
                 Assert-MockCalled `
                     -CommandName Set-WinSystemLocale `
@@ -94,6 +103,7 @@ try
                         -IsSingleInstance 'Yes'
                 } | Should Not Throw
             }
+
             It 'Should call Set-WinSystemLocale' {
                 Assert-MockCalled `
                     -CommandName Set-WinSystemLocale `
@@ -112,20 +122,14 @@ try
                 DisplayName = 'English (United States)'
             } }
 
-        It 'Should throw an InvalidSystemLocaleError exception' {
-            $errorId = 'InvalidSystemLocaleError'
-            $errorMessage = ($localizedData.InvalidSystemLocaleError -f $badSystemLocale)
-            $errorCategory = [System.Management.Automation.ErrorCategory]::InvalidArgument
-            $exception = New-Object `
-                -TypeName System.InvalidOperationException `
-                -ArgumentList $errorMessage
-            $errorRecord = New-Object `
-                -TypeName System.Management.Automation.ErrorRecord `
-                -ArgumentList $exception, $errorId, $errorCategory, $null
+        It 'Should throw the expected exception' {
+            $errorRecord = Get-InvalidArgumentRecord `
+                -Message ($localizedData.InvalidSystemLocaleError -f $badSystemLocale) `
+                -ArgumentName 'SystemLocale'
 
             { Test-TargetResource `
-                -SystemLocale $badSystemLocale `
-                -IsSingleInstance 'Yes' } | Should Throw $errorRecord
+                    -SystemLocale $badSystemLocale `
+                    -IsSingleInstance 'Yes' } | Should Throw $errorRecord
         }
 
         It 'Should return true when Test is passed System Locale that is already set' {
@@ -156,29 +160,6 @@ try
             It 'Should return false when an invalid System Locale is passed' {
                 Test-SystemLocaleValue `
                     -SystemLocale $badSystemLocale | Should Be $false
-            }
-        }
-
-        Describe "$($script:DSCResourceName)\New-TerminatingError" {
-
-            Context 'Create a TestError Exception' {
-
-                It 'should throw an TestError exception' {
-                    $errorId = 'TestError'
-                    $errorCategory = [System.Management.Automation.ErrorCategory]::InvalidArgument
-                    $errorMessage = 'Test Error Message'
-                    $exception = New-Object `
-                        -TypeName System.InvalidOperationException `
-                        -ArgumentList $errorMessage
-                    $errorRecord = New-Object `
-                        -TypeName System.Management.Automation.ErrorRecord `
-                        -ArgumentList $exception, $errorId, $errorCategory, $null
-
-                    { New-TerminatingError `
-                        -ErrorId $errorId `
-                        -ErrorMessage $errorMessage `
-                        -ErrorCategory $errorCategory } | Should Throw $errorRecord
-                }
             }
         }
     } #end InModuleScope $DSCResourceName
