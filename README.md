@@ -54,6 +54,8 @@ Please check out common DSC Resources [contributing guidelines](https://github.c
 
 ### Unreleased
 
+### 1.2.0.0
+
 * Added resource helper module.
 * Change examples to meet HQRM standards and optin to Example validation
   tests.
