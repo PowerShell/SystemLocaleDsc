@@ -1,3 +1,8 @@
+# THIS MODULE HAS BEEN DEPRECATED
+
+It will no longer be released. Please use the 'SystemLocale' resource in
+ComputerManagementDsc instead.
+
 # SystemLocaleDsc
 
 The **SystemLocaleDsc** module contains the **SystemLocale** DSC resource for
